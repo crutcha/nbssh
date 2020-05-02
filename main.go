@@ -50,4 +50,8 @@ func main() {
 	kingpin.Parse()
 	fmt.Printf("%v, %s\n", *verbose, *command)
 	fmt.Println(customfield)
+	netboxClient := newNetboxClient()
+	response, requestErr := netboxClient.Dcim.DcimDevicesList(nil, nil)
+	fmt.Println(response)
+	fmt.Println(requestErr)
 }
