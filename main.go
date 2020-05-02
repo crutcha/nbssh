@@ -11,10 +11,11 @@ var (
 	verbose      = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
 	site         = kingpin.Flag("site", "Site").String()
 	tenant       = kingpin.Flag("tenant", "Tenant").String()
-	role         = kingpin.Flag("Role", "role").String()
+	role         = kingpin.Flag("role", "Role").String()
 	status       = kingpin.Flag("status", "Status").String()
 	manufacturer = kingpin.Flag("manufacturer", "Vendor").String()
 	customfield  = CustomFields(kingpin.Flag("customfield", "Custom Field definition as key-value pair IE: core=something"))
+	concurrency  = kingpin.Flag("concurrency", "Concurrent SSH runners").Default("10").Int()
 )
 
 type customField struct {
@@ -49,6 +50,9 @@ func CustomFields(s kingpin.Settings) (target *[]customField) {
 func main() {
 	kingpin.Parse()
 	netboxClient := newNetboxClient()
-	resultArr := queryDevices(netboxClient)
-	fmt.Println(resultArr)
+	matchingDevices := queryDevices(netboxClient)
+	fmt.Println(matchingDevices)
+
+	executor := newExecutor(matchingDevices)
+	executor.execute()
 }

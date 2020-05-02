@@ -9,4 +9,5 @@ require (
 	github.com/go-openapi/runtime v0.19.14
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/netbox-community/go-netbox v0.0.0-20200325111416-50e92f3e2076
+	golang.org/x/crypto v0.0.0-20190617133340-57b3e21c3d56
 )
