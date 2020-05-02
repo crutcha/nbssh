@@ -51,7 +51,6 @@ func main() {
 	kingpin.Parse()
 	netboxClient := newNetboxClient()
 	matchingDevices := queryDevices(netboxClient)
-	fmt.Println(matchingDevices)
 
 	executor := newExecutor(matchingDevices)
 	executor.execute()
