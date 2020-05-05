@@ -16,7 +16,9 @@ var (
 	manufacturer = kingpin.Flag("manufacturer", "Vendor").String()
 	customfield  = CustomFields(kingpin.Flag("customfield", "Custom Field definition as key-value pair IE: core=something"))
 	concurrency  = kingpin.Flag("concurrency", "Concurrent SSH runners").Default("10").Int()
-confirm = kingpin.Flag("confirm", "Confirm device list before execution").Short('c').Bool()
+	confirm      = kingpin.Flag("confirm", "Confirm device list before execution").Short('c').Bool()
+	username     = kingpin.Flag("username", "Username. Defaults to logged in user").String()
+	password     = kingpin.Flag("password", "Password. Defaults to SSH key").String()
 )
 
 type customField struct {
@@ -53,7 +55,7 @@ func main() {
 	netboxClient := newNetboxClient()
 	matchingDevices := queryDevices(netboxClient)
 
-    fmt.Println("Executing against: ", matchingDevices)
+	fmt.Println("Executing against: ", matchingDevices)
 
 	executor := newExecutor(matchingDevices)
 	executor.execute()

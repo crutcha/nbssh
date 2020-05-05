@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
-	//"encoding/json"
 	"fmt"
 	"golang.org/x/sys/unix"
 	"os"
 	"os/exec"
+	"os/user"
 	"strings"
 	"sync"
 )
@@ -14,11 +14,12 @@ import (
 var terminalWidth uint16
 
 const (
-	InfoColor    = "\033[1;34m%s\033[0m"
-	NoticeColor  = "\033[1;36m%s\033[0m"
-	WarningColor = "\033[1;33m%s\033[0m"
-	ErrorColor   = "\033[1;31m%s\033[0m"
-	DebugColor   = "\033[0;36m%s\033[0m"
+	InfoColor    = "\033[1;34m%s\033[0m\n"
+	NoticeColor  = "\033[1;36m%s\033[0m\n"
+	WarningColor = "\033[1;33m%s\033[0m\n"
+	ErrorColor   = "\033[1;31m%s\033[0m\n"
+	DebugColor   = "\033[0;36m%s\033[0m\n"
+	BannerColor  = "\033[0;32m%s\033[0m\n"
 )
 
 // TODO: what if its windows?
@@ -37,13 +38,6 @@ type Executor struct {
 	command     string
 	devices     []string
 	concurrency int
-}
-
-type Result struct {
-	CommandErr string `json:"commanderr"`
-	Device     string `json:"device"`
-	Stdout     string `json:"stdout"`
-	Stderr     string `json:"stderr"`
 }
 
 func newExecutor(devices []string) *Executor {
@@ -65,38 +59,42 @@ func (e *Executor) execute() {
 		wg.Add(1)
 		go func(device string) {
 			defer wg.Done()
-			//fmt.Println("Called ", device)
+
+			// Gather user data. No need to inquire about SSH keys, if no password is passed in, SSH keys
+			// will automatically be checked.
+            var passString string
+			if *username == "" {
+				currentUser, _ := user.Current()
+                username = &currentUser.Username
+			}
+            if *password == "" {
+                passString = ""
+            } else {
+                passString = fmt.Sprintf(":%s", *password)
+            }
 
 			// golang stdlib /x/crypto/ssh doesnt currently fully support openssh config file.
 			// instead we'll fork these out to host machine ssh
-			cmd := exec.Command("ssh", device, *command)
+			deviceString := fmt.Sprintf("%s%s@%s", *username, passString, device)
+			fmt.Println(deviceString)
+			cmd := exec.Command("ssh", deviceString, *command)
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
 			cmdErr := cmd.Run()
 
 			outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-			/*
-				result := Result{
-					CommandErr: fmt.Sprintf("%v", err),
-					Device:     device,
-					Stdout:     outStr,
-					Stderr:     errStr,
-				}
-				resultOut, _ := json.Marshal(result)
-				fmt.Println(string(resultOut))
-			*/
-			fmt.Println(strings.Repeat("#", int(terminalWidth)))
-			fmt.Println(device)
-			fmt.Println(strings.Repeat("#", int(terminalWidth)))
+			fmt.Printf(BannerColor, strings.Repeat("#", int(terminalWidth)))
+			fmt.Printf(BannerColor, device)
+			fmt.Printf(BannerColor, strings.Repeat("#", int(terminalWidth)))
 			fmt.Println(outStr)
 
-            if errStr != "" {
-                fmt.Printf(InfoColor, errStr)
-            }
-            if cmdErr != nil {
-                fmt.Println(cmdErr, "\n")
-            }
+			if errStr != "" {
+				fmt.Printf(WarningColor, errStr)
+			}
+			if cmdErr != nil {
+				fmt.Printf(WarningColor, cmdErr, "\n")
+			}
 
 			<-poolSemaphore
 		}(device)
