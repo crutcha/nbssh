@@ -3,7 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"golang.org/x/sys/unix"
+	//"golang.org/x/sys/unix"
+    "golang.org/x/crypto/ssh/terminal"
 	"os"
 	"os/exec"
 	"os/user"
@@ -12,7 +13,7 @@ import (
 	"sync"
 )
 
-var terminalWidth uint16
+var terminalWidth int 
 
 const (
 	InfoColor    = "\033[1;34m%s\033[0m\n"
@@ -26,14 +27,18 @@ const (
 // TODO: what if its windows?
 func init() {
     fmt.Println(runtime.GOOS)
+    /*
 	winSize, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
 	terminalWidth = winSize.Col
+    */
+    width, _, err := terminal.GetSize(int(os.Stdout.Fd()))
 
 	if err != nil {
 		panic(err)
 	}
 
-	terminalWidth = winSize.Col
+	terminalWidth = width
+    fmt.Println(terminalWidth)
 }
 
 type Executor struct {
