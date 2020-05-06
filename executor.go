@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"os/user"
 	"strings"
+    "runtime"
 	"sync"
 )
 
@@ -24,6 +25,7 @@ const (
 
 // TODO: what if its windows?
 func init() {
+    fmt.Println(runtime.GOOS)
 	winSize, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
 	terminalWidth = winSize.Col
 
