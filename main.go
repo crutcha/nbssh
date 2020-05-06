@@ -6,11 +6,11 @@ import (
 )
 
 func main() {
-	fmt.Println(kingpin.Parse())
+	kingpin.Parse()
 	matchingDevices := queryDevices()
 
 	fmt.Println("Executing against: ", matchingDevices)
 
-	//executor := newExecutor(matchingDevices)
-	//executor.execute()
+	executor := newExecutor(matchingDevices)
+	executor.execute()
 }
