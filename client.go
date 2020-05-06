@@ -50,14 +50,20 @@ func queryDevices() []string {
 	req.Header.Add("Authorization", fmt.Sprintf("Token %s", apiToken))
 
 	q := url.Values{}
-    if *site != "" {
-        q.Add("site", *site)
+    if *status != "" {
+        q.Add("status", *status)
     }
-    if *tenant != "" {
-        q.Add("tenant", *tenant)
+    for _, value := range *site {
+        q.Add("site", value)
     }
-    if *role != "" {
-        q.Add("role", *role)
+    for _, value := range *tenant {
+        q.Add("tenant", value)
+    }
+    for _, value := range *role {
+        q.Add("role", value)
+    }
+    for _, value := range *customfield {
+        q.Add(fmt.Sprintf("cf_%s", value.Key), value.Value)
     }
 	q.Add("limit", strconv.Itoa(pageSize))
 
@@ -71,12 +77,16 @@ func queryDevices() []string {
 		req.URL.RawQuery = q.Encode()
 		resp, requestErr := client.Do(req)
 		body, _ := ioutil.ReadAll(resp.Body)
-		json.Unmarshal(body, &payload)
 
 		if requestErr != nil {
 			panic(requestErr)
 		}
 
+        if resp.StatusCode != 200 {
+            panic(fmt.Errorf("%s %s", resp.Status, body))
+        }
+
+		json.Unmarshal(body, &payload)
 		for _, device := range payload.Results {
 			if device["name"] != nil {
 				deviceArray = append(deviceArray, device["name"].(string))
