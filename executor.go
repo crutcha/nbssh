@@ -92,7 +92,7 @@ func (e *Executor) execute() {
 				fmt.Printf(WarningColor, errStr)
 			}
 			if cmdErr != nil {
-				fmt.Printf(WarningColor, cmdErr, "\n")
+				fmt.Printf(WarningColor, cmdErr)
 			}
 
 			<-poolSemaphore
