@@ -52,11 +52,10 @@ func CustomFields(s kingpin.Settings) (target *[]customField) {
 
 func main() {
 	kingpin.Parse()
-	netboxClient := newNetboxClient()
-	matchingDevices := queryDevices(netboxClient)
+	matchingDevices := queryDevices()
 
 	fmt.Println("Executing against: ", matchingDevices)
 
-	executor := newExecutor(matchingDevices)
-	executor.execute()
+	//executor := newExecutor(matchingDevices)
+	//executor.execute()
 }

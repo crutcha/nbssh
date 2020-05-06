@@ -62,21 +62,20 @@ func (e *Executor) execute() {
 
 			// Gather user data. No need to inquire about SSH keys, if no password is passed in, SSH keys
 			// will automatically be checked.
-            var passString string
+			var passString string
 			if *username == "" {
 				currentUser, _ := user.Current()
-                username = &currentUser.Username
+				username = &currentUser.Username
 			}
-            if *password == "" {
-                passString = ""
-            } else {
-                passString = fmt.Sprintf(":%s", *password)
-            }
+			if *password == "" {
+				passString = ""
+			} else {
+				passString = fmt.Sprintf(":%s", *password)
+			}
 
 			// golang stdlib /x/crypto/ssh doesnt currently fully support openssh config file.
 			// instead we'll fork these out to host machine ssh
 			deviceString := fmt.Sprintf("%s%s@%s", *username, passString, device)
-			fmt.Println(deviceString)
 			cmd := exec.Command("ssh", deviceString, *command)
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout

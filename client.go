@@ -1,16 +1,17 @@
 package main
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
-	runtimeclient "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
-	"github.com/netbox-community/go-netbox/netbox/client"
-	"github.com/netbox-community/go-netbox/netbox/client/dcim"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
+	"strconv"
+	"time"
 )
 
-const pageSize int64 = 50
+const pageSize int = 50
 
 var apiToken string
 var netboxHost string
@@ -29,57 +30,64 @@ func init() {
 	}
 }
 
-func newNetboxClient() *client.NetBox {
-	t := runtimeclient.New(netboxHost, client.DefaultBasePath, client.DefaultSchemes)
-	authHeader := "Token " + apiToken
-	t.DefaultAuthentication = runtimeclient.APIKeyAuth("Authorization", "header", authHeader)
-
-	if *verbose {
-		t.SetDebug(true)
-	}
-
-	client := client.New(t, strfmt.Default)
-	return client
+type DRFResponse struct {
+	Count    uint                     `json:"count"`
+	Next     string                   `json:"next"`
+	Previous string                   `json:"previous"`
+    // This is kinda dirty but we only want a single key/value pair out of this
+    // this map, it's not worth the effort to define all the structs that could
+    // be defined here
+	Results  []map[string]interface{} `json:results`
 }
 
-// Wrapper around DcimDevicesList to deal with pagination
-func queryDevices(client *client.NetBox) []string {
-	currentOffset := int64(0)
+// Tried using go-netbox here but if the NetBox instance is using HTTPS, it'll try HTTP
+// first, receive a 301 redirect, and the redirect is followed but will not include the
+// auth header when following redirect. Since this is very focused on a single endpoint
+// with a limited query param set, we'll just handle this ourselves.
+func queryDevices() []string {
+	client := &http.Client{Timeout: time.Second * 10}
+	req, _ := http.NewRequest("GET", fmt.Sprintf("%s/api/dcim/devices/", netboxHost), nil)
+	req.Header.Add("Authorization", fmt.Sprintf("Token %s", apiToken))
 
-	// cannot address pointer of const apparently
-	ourLimit := pageSize
-
-	params := dcim.DcimDevicesListParams{
-		Context:      context.Background(),
-		Site:         site,
-		Tenant:       tenant,
-		Role:         role,
-		Manufacturer: manufacturer,
-		Status:       status,
-		Limit:        &ourLimit,
-		Offset:       &currentOffset,
-	}
+	q := url.Values{}
+    if *site != "" {
+        q.Add("site", *site)
+    }
+    if *tenant != "" {
+        q.Add("tenant", *tenant)
+    }
+    if *role != "" {
+        q.Add("role", *role)
+    }
+	q.Add("limit", strconv.Itoa(pageSize))
 
 	deviceArray := make([]string, 0)
 	hasMoreResults := true
+	currentOffset := 0
 	for hasMoreResults == true {
-		response, requestErr := client.Dcim.DcimDevicesList(&params, nil)
+		var payload DRFResponse
+
+        q.Set("offset", strconv.Itoa(currentOffset))
+		req.URL.RawQuery = q.Encode()
+		resp, requestErr := client.Do(req)
+		body, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal(body, &payload)
 
 		if requestErr != nil {
 			panic(requestErr)
 		}
 
-		for _, device := range response.Payload.Results {
-			if device.Name != nil {
-				deviceArray = append(deviceArray, *device.Name)
+		for _, device := range payload.Results {
+			if device["name"] != nil {
+				deviceArray = append(deviceArray, device["name"].(string))
 
 			}
 		}
 
-		if response.Payload.Next != nil {
-			*params.Offset += ourLimit
+		if payload.Next != "" {
+            currentOffset += pageSize
 		} else {
-			hasMoreResults = false
+            hasMoreResults = false
 		}
 	}
 
