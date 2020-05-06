@@ -1,6 +1,14 @@
 # nbssh
 SSH runner backed by NetBox inventory
 
+## Setup
+
+nbssh relies on 2 environment variables:
+* `NETBOX_HOST`: netbox server IE: https://netboxdemo.com
+* `NETBOX_API_TOKEN`: API token for auth
+
+Set these in either `~/.bashrc` (linux) or `~/.bash_profile` (macOS)
+
 ## Usage
 ```
 drew@test-vm[~/nbssh] (master) ×  ❯ nbssh
