@@ -9,6 +9,15 @@ nbssh relies on 2 environment variables:
 
 Set these in either `~/.bashrc` (linux) or `~/.bash_profile` (macOS)
 
+To build from source:
+
+```
+cd ~
+git clone https://github.com/crutcha/nbssh.git
+cd nbssh
+go build
+```
+
 ## Usage
 ```
 drew@test-vm[~/nbssh] (master) ×  ❯ nbssh
