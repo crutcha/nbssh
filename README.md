@@ -18,6 +18,8 @@ cd nbssh
 go build
 ```
 
+Pre-compiled binaries located here: [Releases](https://github.com/crutcha/nbssh/releases)
+
 ## Usage
 ```
 drew@test-vm[~/nbssh] (master) ×  ❯ nbssh
