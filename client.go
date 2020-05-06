@@ -31,13 +31,13 @@ func init() {
 }
 
 type DRFResponse struct {
-	Count    uint                     `json:"count"`
-	Next     string                   `json:"next"`
-	Previous string                   `json:"previous"`
-    // This is kinda dirty but we only want a single key/value pair out of this
-    // this map, it's not worth the effort to define all the structs that could
-    // be defined here
-	Results  []map[string]interface{} `json:results`
+	Count    uint   `json:"count"`
+	Next     string `json:"next"`
+	Previous string `json:"previous"`
+	// This is kinda dirty but we only want a single key/value pair out of this
+	// this map, it's not worth the effort to define all the structs that could
+	// be defined here
+	Results []map[string]interface{} `json:results`
 }
 
 // Tried using go-netbox here but if the NetBox instance is using HTTPS, it'll try HTTP
@@ -50,21 +50,21 @@ func queryDevices() []string {
 	req.Header.Add("Authorization", fmt.Sprintf("Token %s", apiToken))
 
 	q := url.Values{}
-    if *status != "" {
-        q.Add("status", *status)
-    }
-    for _, value := range *site {
-        q.Add("site", value)
-    }
-    for _, value := range *tenant {
-        q.Add("tenant", value)
-    }
-    for _, value := range *role {
-        q.Add("role", value)
-    }
-    for _, value := range *customfield {
-        q.Add(fmt.Sprintf("cf_%s", value.Key), value.Value)
-    }
+	if *status != "" {
+		q.Add("status", *status)
+	}
+	for _, value := range *site {
+		q.Add("site", value)
+	}
+	for _, value := range *tenant {
+		q.Add("tenant", value)
+	}
+	for _, value := range *role {
+		q.Add("role", value)
+	}
+	for _, value := range *customfield {
+		q.Add(fmt.Sprintf("cf_%s", value.Key), value.Value)
+	}
 	q.Add("limit", strconv.Itoa(pageSize))
 
 	deviceArray := make([]string, 0)
@@ -73,7 +73,7 @@ func queryDevices() []string {
 	for hasMoreResults == true {
 		var payload DRFResponse
 
-        q.Set("offset", strconv.Itoa(currentOffset))
+		q.Set("offset", strconv.Itoa(currentOffset))
 		req.URL.RawQuery = q.Encode()
 		resp, requestErr := client.Do(req)
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -82,9 +82,9 @@ func queryDevices() []string {
 			panic(requestErr)
 		}
 
-        if resp.StatusCode != 200 {
-            panic(fmt.Errorf("%s %s", resp.Status, body))
-        }
+		if resp.StatusCode != 200 {
+			panic(fmt.Errorf("%s %s", resp.Status, body))
+		}
 
 		json.Unmarshal(body, &payload)
 		for _, device := range payload.Results {
@@ -95,9 +95,9 @@ func queryDevices() []string {
 		}
 
 		if payload.Next != "" {
-            currentOffset += pageSize
+			currentOffset += pageSize
 		} else {
-            hasMoreResults = false
+			hasMoreResults = false
 		}
 	}
 

@@ -61,15 +61,15 @@ func (np *netboxParams) Set(value string) error {
 }
 
 func (np *netboxParams) String() string {
-    return strings.Join(*np, ",")
+	return strings.Join(*np, ",")
 }
 
 func (nb *netboxParams) IsCumulative() bool {
-    return false
+	return false
 }
 
 func NetboxParam(s kingpin.Settings) (target *netboxParams) {
-    target = new(netboxParams)
-    s.SetValue((*netboxParams)(target))
-    return
+	target = new(netboxParams)
+	s.SetValue((*netboxParams)(target))
+	return
 }
