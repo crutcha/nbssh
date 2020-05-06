@@ -43,6 +43,8 @@ Args:
   <command>  Command
 ```
 
+Multiple parameters can be passed in as comma-seperated value, IE: `--site=site-1,site-2`. Mutliple custom field values can also be used. Custom fields flag expects key/value pair, for example: `--customfield first=this --customfield second=that`.
+
 ## Example
 
 ```
