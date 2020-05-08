@@ -1,5 +1,5 @@
 # nbssh
-SSH runner backed by NetBox inventory
+Concurrent SSH runner backed by NetBox inventory
 
 ## Setup
 
