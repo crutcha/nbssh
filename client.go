@@ -67,7 +67,7 @@ func queryDevices() []string {
 	}
 	q.Add("limit", strconv.Itoa(pageSize))
 
-	deviceArray := make([]string, 0)
+	deviceSet := make(map[string]bool)
 	hasMoreResults := true
 	currentOffset := 0
 	for hasMoreResults == true {
@@ -89,8 +89,10 @@ func queryDevices() []string {
 		json.Unmarshal(body, &payload)
 		for _, device := range payload.Results {
 			if device["name"] != nil {
-				deviceArray = append(deviceArray, device["name"].(string))
-
+				name := device["name"].(string)
+				if _, ok := deviceSet[name]; !ok {
+					deviceSet[name] = true
+				}
 			}
 		}
 
@@ -99,6 +101,11 @@ func queryDevices() []string {
 		} else {
 			hasMoreResults = false
 		}
+	}
+
+	deviceArray := make([]string, 0)
+	for device, _ := range deviceSet {
+        deviceArray = append(deviceArray, device)
 	}
 
 	return deviceArray
