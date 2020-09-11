@@ -67,6 +67,12 @@ func queryDevices() []string {
 	}
 	q.Add("limit", strconv.Itoa(pageSize))
 
+	// Allows user to use custom field to determine FQDN of device
+	usingCustomField := false
+	if *namefield != "" {
+		usingCustomField = true
+	}
+
 	deviceSet := make(map[string]bool)
 	hasMoreResults := true
 	currentOffset := 0
@@ -88,11 +94,9 @@ func queryDevices() []string {
 
 		json.Unmarshal(body, &payload)
 		for _, device := range payload.Results {
-			if device["name"] != nil {
-				name := device["name"].(string)
-				if _, ok := deviceSet[name]; !ok {
-					deviceSet[name] = true
-				}
+			name := getDeviceString(device, usingCustomField)
+			if _, ok := deviceSet[name]; !ok {
+				deviceSet[name] = true
 			}
 		}
 
@@ -105,8 +109,22 @@ func queryDevices() []string {
 
 	deviceArray := make([]string, 0)
 	for device, _ := range deviceSet {
-        deviceArray = append(deviceArray, device)
+		deviceArray = append(deviceArray, device)
 	}
 
 	return deviceArray
+}
+
+func getDeviceString(device map[string]interface{}, customField bool) string {
+	if customField {
+		custom_fields := device["custom_fields"].(map[string]interface{})
+		if val, _ := custom_fields[*namefield]; val != nil {
+			return val.(string)
+		}
+	}
+
+	// name will always exist on device object
+	name := device["name"].(string)
+
+	return name
 }
