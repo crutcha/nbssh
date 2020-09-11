@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"sort"
 	"testing"
 
@@ -10,6 +11,8 @@ import (
 
 func TestClientGetDevicesDefaultNameField(t *testing.T) {
 	assert := assert.New(t)
+	os.Setenv("NETBOX_HOST", "http://localhost")
+	os.Setenv("NETBOX_API_TOKEN", "not-real")
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -50,6 +53,8 @@ func TestClientGetDevicesDefaultNameField(t *testing.T) {
 
 func TestClientGetDevicesCustomNameField(t *testing.T) {
 	assert := assert.New(t)
+	os.Setenv("NETBOX_HOST", "http://localhost")
+	os.Setenv("NETBOX_API_TOKEN", "not-real")
 	*namefield = "fqdn"
 
 	httpmock.Activate()
