@@ -32,6 +32,6 @@ jobs:
     - name: Test
       run: go test -v .
       env:
-        NETBOX_HOST: test.local
+        NETBOX_HOST: http://localhost
         NETBOX_API_TOKEN: not-real-token
 
