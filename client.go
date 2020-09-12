@@ -46,9 +46,13 @@ type DRFResponse struct {
 // with a limited query param set, we'll just handle this ourselves.
 func queryDevices() []string {
 	client := &http.Client{Timeout: time.Second * 10}
-	req, _ := http.NewRequest("GET", fmt.Sprintf("%s/api/dcim/devices/", netboxHost), nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Token %s", apiToken))
+	req, newReqErr := http.NewRequest("GET", fmt.Sprintf("%s/api/dcim/devices/", netboxHost), nil)
 
+	if newReqErr != nil {
+		panic(newReqErr)
+	}
+
+	req.Header.Add("Authorization", fmt.Sprintf("Token %s", apiToken))
 	q := url.Values{}
 	if *status != "" {
 		q.Add("status", *status)
