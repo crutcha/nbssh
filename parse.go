@@ -12,7 +12,7 @@ var (
 	site         = NetboxParam(kingpin.Flag("site", "Site"))
 	tenant       = NetboxParam(kingpin.Flag("tenant", "Tenant"))
 	role         = NetboxParam(kingpin.Flag("role", "Role"))
-	status       = kingpin.Flag("status", "Status").String()
+	status       = kingpin.Flag("status", "Status").Default("active").String()
 	manufacturer = NetboxParam(kingpin.Flag("manufacturer", "Vendor"))
 	namefield    = kingpin.Flag("namefield", "Name Field").String()
 	customfield  = CustomFields(kingpin.Flag("customfield", "Custom Field definition as key-value pair IE: core=something"))
