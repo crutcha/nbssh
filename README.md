@@ -9,6 +9,7 @@ nbssh relies on 2 environment variables:
 
 Set these in either `~/.bashrc` (linux) or `~/.bash_profile` (macOS)
 
+#### Source
 To build from source:
 
 ```
@@ -18,7 +19,20 @@ cd nbssh
 go build
 ```
 
+#### Download
 Pre-compiled binaries located here: [Releases](https://github.com/crutcha/nbssh/releases)
+
+Once downloaded, unzip and place into a folder on $PATH
+
+```
+wget https://github.com/crutcha/nbssh/releases/download/v0.2/nbssh-v{tag}-{os}-{arch}.tar.gz
+tar -zxvf nbssh-v{tag}-{os}-{arch}.tar.gz
+sudo mv nbssh /usr/bin
+```
+
+#### Install via HomeBrew (MacOS)
+
+todo
 
 ## Usage
 ```
@@ -34,6 +48,7 @@ Flags:
       --status=STATUS      Status
       --manufacturer=MANUFACTURER
                            Vendor
+      --namefield=NAMEFIELD  Custom field to use for device name if applicable
       --customfield=CUSTOMFIELD ...
                            Custom Field definition as key-value pair IE: core=something
       --concurrency=10     Concurrent SSH runners

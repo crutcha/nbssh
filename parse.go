@@ -14,7 +14,7 @@ var (
 	role         = NetboxParam(kingpin.Flag("role", "Role"))
 	status       = kingpin.Flag("status", "Status").Default("active").String()
 	manufacturer = NetboxParam(kingpin.Flag("manufacturer", "Vendor"))
-	namefield    = kingpin.Flag("namefield", "Name Field").String()
+	namefield    = kingpin.Flag("namefield", "Custom field to use for device name if applicable").String()
 	customfield  = CustomFields(kingpin.Flag("customfield", "Custom Field definition as key-value pair IE: core=something"))
 	concurrency  = kingpin.Flag("concurrency", "Concurrent SSH runners").Default("10").Int()
 	confirm      = kingpin.Flag("confirm", "Confirm device list before execution").Short('c').Bool()
