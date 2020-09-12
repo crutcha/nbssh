@@ -83,19 +83,21 @@ func (e *Executor) execute() {
 			cmd.Stderr = &stderr
 			cmdErr := cmd.Run()
 
+			var displayedOutput bytes.Buffer
 			outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-			fmt.Printf(BannerColor, strings.Repeat("#", int(terminalWidth)))
-			fmt.Printf(BannerColor, device)
-			fmt.Printf(BannerColor, strings.Repeat("#", int(terminalWidth)))
-			fmt.Println(outStr)
+			displayedOutput.WriteString(fmt.Sprintf(BannerColor, strings.Repeat("#", int(terminalWidth))))
+			displayedOutput.WriteString(fmt.Sprintf(BannerColor, device))
+			displayedOutput.WriteString(fmt.Sprintf(BannerColor, strings.Repeat("#", int(terminalWidth))))
+			displayedOutput.WriteString(fmt.Sprintln(outStr))
 
 			if errStr != "" {
-				fmt.Printf(WarningColor, errStr)
+				displayedOutput.WriteString(fmt.Sprintf(WarningColor, errStr))
 			}
 			if cmdErr != nil {
-				fmt.Printf(WarningColor, cmdErr)
+				displayedOutput.WriteString(fmt.Sprintf(WarningColor, cmdErr))
 			}
 
+			fmt.Println(displayedOutput.String())
 			<-poolSemaphore
 		}(device)
 	}

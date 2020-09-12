@@ -82,12 +82,11 @@ func queryDevices() []string {
 		q.Set("offset", strconv.Itoa(currentOffset))
 		req.URL.RawQuery = q.Encode()
 		resp, requestErr := client.Do(req)
-		body, _ := ioutil.ReadAll(resp.Body)
-
 		if requestErr != nil {
 			panic(requestErr)
 		}
 
+		body, _ := ioutil.ReadAll(resp.Body)
 		if resp.StatusCode != 200 {
 			panic(fmt.Errorf("%s %s", resp.Status, body))
 		}
