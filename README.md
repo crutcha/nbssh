@@ -48,6 +48,7 @@ Flags:
       --status=STATUS      Status
       --manufacturer=MANUFACTURER
                            Vendor
+      --namefield=NAMEFIELD  Custom field to use for device name if applicable
       --customfield=CUSTOMFIELD ...
                            Custom Field definition as key-value pair IE: core=something
       --concurrency=10     Concurrent SSH runners
