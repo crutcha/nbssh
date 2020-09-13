@@ -7,7 +7,7 @@ nbssh relies on 2 environment variables:
 * `NETBOX_HOST`: netbox server IE: https://netboxdemo.com
 * `NETBOX_API_TOKEN`: API token for auth
 
-Set these in either `~/.bashrc` (linux) or `~/.bash_profile` (macOS)
+Set these in either `~/.bashrc` (linux) or `~/.bash_profile` (macOS). For windows, you can [set env variables via powershell](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-powershell-1.0/ff730964(v=technet.10)?redirectedfrom=MSDN).
 
 #### Source
 To build from source:
