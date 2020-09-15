@@ -9,6 +9,10 @@ nbssh relies on 2 environment variables:
 
 Set these in either `~/.bashrc` (linux) or `~/.bash_profile` (macOS). For windows, you can [set env variables via powershell](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-powershell-1.0/ff730964(v=technet.10)?redirectedfrom=MSDN).
 
+```
+export NETBOX_HOST="https://your.netbox.server"
+export NETBOX_API_TOKEN="yournetboxtoken"
+```
 
 #### Source
 To build from source:
