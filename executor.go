@@ -77,7 +77,7 @@ func (e *Executor) execute() {
 			// golang stdlib /x/crypto/ssh doesnt currently fully support openssh config file.
 			// instead we'll fork these out to host machine ssh
 			deviceString := fmt.Sprintf("%s%s@%s", *username, passString, device)
-			cmd := exec.Command("ssh", deviceString, *command)
+			cmd := exec.Command("ssh", "-oStrictHostKeyChecking=accept-new", deviceString, *command)
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
